@@ -4,12 +4,16 @@ import android.Manifest
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresPermission
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +43,7 @@ import com.example.gweather.presentation.screens.weather.composables.DetailInfo
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.koin.androidx.compose.koinViewModel
 
@@ -54,10 +60,8 @@ fun CurrentWeatherScreen(
 
     val client = LocationServices.getFusedLocationProviderClient(context)
     var locationDetails by remember { mutableStateOf(LocationDetails()) }
-
-
-
-    LaunchedEffect(Unit) {
+    val scope = rememberCoroutineScope()
+    val getWeather = suspend {
         val location = client.getCurrentLocation(
             Priority.PRIORITY_HIGH_ACCURACY,
             CancellationTokenSource().token
@@ -69,6 +73,10 @@ fun CurrentWeatherScreen(
                 )
             )
         }
+    }
+
+    LaunchedEffect(Unit) {
+        getWeather()
     }
 
     BackHandler {}
@@ -150,13 +158,27 @@ fun CurrentWeatherScreen(
             }
 
             is CurrentWeatherState.FetchDetailsError -> {
-                Box(
+                Column(
                     Modifier
                         .fillMaxWidth(.9f)
                         .clip(RoundedCornerShape(10))
-                        .background(Color.White)
+                        .background(Color.White),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(currentState.msg, modifier = Modifier.padding(10.dp), color = Color.Black)
+                    Spacer(Modifier.height(10.dp))
+                    Text(
+                        "Refresh",
+                        modifier = Modifier
+                            .clickable{
+                                scope.launch {
+                                    getWeather()
+                                }
+                            }
+                            .clip(RoundedCornerShape(10))
+                            .background(Color(0xFF0D47A1))
+                            .padding(10.dp)
+                    )
                 }
             }
         }
