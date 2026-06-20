@@ -1,7 +1,15 @@
 package com.example.gweather.presentation.screens.login
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +24,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.gweather.R
 import com.example.gweather.data.local.entity.UserEntity
@@ -56,6 +67,39 @@ fun LoginScreen(
     val user = remember {
         mutableStateOf("")
     }
+    val askGpsEnable = remember {
+        mutableStateOf(false)
+    }
+
+    val hasPermission = ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+
+    }
+
+    if (askGpsEnable.value) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Enable Location") },
+            text = { Text("Please turn on location services to use this feature.") },
+            confirmButton = {
+                Button(onClick = {
+                    context.startActivity(
+                        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    )
+                    askGpsEnable.value = false
+                }) {
+                    Text("Go to Settings")
+                }
+            }
+        )
+    }
+
     Box(Modifier
         .fillMaxSize()
         .background(
@@ -204,7 +248,25 @@ fun LoginScreen(
             }
         }
         LoginScreenState.SuccessLogin -> {
+            if (isLocationEnabled(context).not()) {
+                askGpsEnable.value = true
+                return
+            }
+            if (hasPermission.not()) {
+                permissionLauncher.launch(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                return
+            }
             onSuccessLogin()
         }
     }
+}
+
+private fun isLocationEnabled(context: Context): Boolean {
+    val locationManager =
+        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+    return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 }

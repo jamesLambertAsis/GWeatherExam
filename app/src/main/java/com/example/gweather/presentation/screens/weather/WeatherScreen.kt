@@ -23,7 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.gweather.R
 import com.example.gweather.presentation.screens.weather.current_weather.CurrentWeatherScreen
 import com.example.gweather.presentation.screens.weather.weather_list.WeatherListScreen
 
@@ -55,18 +57,19 @@ fun WeatherScreen() {
                     .clickable(){
                         optionSelected = Option.CURRENT_WEATHER
                     }
-                    .clip(RoundedCornerShape(5))
+                    .clip(RoundedCornerShape(10))
                     .background(if (optionSelected == Option.CURRENT_WEATHER) Color.White else Color.Transparent)
                     .border(
-                        width = 2.dp,
+                        width = 1.dp,
                         color = if (optionSelected == Option.CURRENT_WEATHER) Color.Transparent else Color.White,
-                        shape = RoundedCornerShape(5)
+                        shape = RoundedCornerShape(10)
                         )
                     .weight(1f)
                     .fillMaxWidth(.9f),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Current Weather",
+                Text(
+                    stringResource(R.string.current_weather),
                     color = if (optionSelected == Option.CURRENT_WEATHER) Color.Black else Color.White)
             }
             Spacer(Modifier.width(20.dp))
@@ -75,18 +78,18 @@ fun WeatherScreen() {
                     .clickable(){
                         optionSelected = Option.WEATHER_LIST
                     }
-                    .clip(RoundedCornerShape(5))
+                    .clip(RoundedCornerShape(10))
                     .background(if (optionSelected == Option.WEATHER_LIST) Color.White else Color.Transparent)
                     .border(
-                        width = 2.dp,
+                        width = 1.dp,
                         color = if (optionSelected == Option.WEATHER_LIST) Color.Transparent else Color.White,
-                        shape = RoundedCornerShape(5)
+                        shape = RoundedCornerShape(10)
                     )
                     .weight(1f)
                     .fillMaxWidth(.9f),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Current Weather",
+                Text(stringResource(R.string.weather_list),
                     color = if (optionSelected == Option.WEATHER_LIST) Color.Black else Color.White)
             }
         }

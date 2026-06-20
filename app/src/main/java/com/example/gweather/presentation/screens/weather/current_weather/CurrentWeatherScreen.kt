@@ -62,7 +62,7 @@ fun CurrentWeatherScreen(
             Priority.PRIORITY_HIGH_ACCURACY,
             CancellationTokenSource().token
         ).await()
-        if (location != null){
+        if (location != null) {
             viewModel.onEvent(
                 CurrentWeatherEvent.GetCurrentCurrentWeather(
                     location.latitude, location.longitude
@@ -86,71 +86,75 @@ fun CurrentWeatherScreen(
             ),
         contentAlignment = Alignment.Center
     ) {
-        when(currentState) {
+        when (currentState) {
             CurrentWeatherState.Idle -> Unit
             CurrentWeatherState.Loading -> {
-
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10))
-                            .background(Color.White)
-                            .padding(20.dp)
-                            .align(Alignment.Center),
-                        color = Color(0xFF1F31FF),
-                        trackColor = Color.Transparent
-                    )
-
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10))
+                        .background(Color.White)
+                        .padding(20.dp)
+                        .align(Alignment.Center),
+                    color = Color(0xFF1F31FF),
+                    trackColor = Color.Transparent
+                )
             }
             is CurrentWeatherState.FetchDetailsSuccess -> {
                 locationDetails = currentState.locationDetails
 
-                    Column(
-                        Modifier
-                            .fillMaxWidth(.9f)
-                            .clip(RoundedCornerShape(5))
-                            .background(Color.White)
-                            .padding(horizontal = 6.dp, vertical = 10.dp)
+                Column(
+                    Modifier
+                        .fillMaxWidth(.9f)
+                        .clip(RoundedCornerShape(5))
+                        .background(Color.White)
+                        .padding(horizontal = 6.dp, vertical = 10.dp)
+                ) {
+                    DetailInfo(
+                        label = stringResource(R.string.location),
+                        data = "${locationDetails.country}, ${locationDetails.city}"
+                    )
+                    DetailInfo(
+                        label = stringResource(R.string.temperature),
+                        data = locationDetails.temp
+                    )
+                    DetailInfo(
+                        label = stringResource(R.string.sunrise),
+                        data = locationDetails.sunrise
+                    )
+                    DetailInfo(
+                        label = stringResource(R.string.sunset),
+                        data = locationDetails.sunset
+                    )
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        DetailInfo(
-                            label = stringResource(R.string.location),
-                            data = "${locationDetails.country}, ${locationDetails.city}"
+                        Text(
+                            text = stringResource(R.string.weather) + ": ",
+                            color = Color.Black
                         )
-                        DetailInfo(
-                            label = stringResource(R.string.temperature),
-                            data = locationDetails.temp
+                        Text(
+                            text = locationDetails.currentWeather,
+                            color = Color.Black
                         )
-                        DetailInfo(
-                            label = stringResource(R.string.sunrise),
-                            data = locationDetails.sunrise
+                        AsyncImage(
+                            model = locationDetails.icon,
+                            contentDescription = "weather status icon",
+                            placeholder = painterResource(R.drawable.ic_launcher_foreground),
+                            error = painterResource(R.drawable.ic_launcher_foreground),
+                            modifier = Modifier.size(50.dp)
                         )
-                        DetailInfo(
-                            label = stringResource(R.string.sunset),
-                            data = locationDetails.sunset
-                        )
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = stringResource(R.string.weather) + ": ",
-                                color = Color.Black
-                            )
-                            Text(text = locationDetails.currentWeather,
-                                color = Color.Black
-                            )
-                            AsyncImage(
-                                model = locationDetails.icon,
-                                contentDescription = "weather status icon",
-                                placeholder = painterResource(R.drawable.ic_launcher_foreground),
-                                error = painterResource(R.drawable.ic_launcher_foreground),
-                                modifier = Modifier.size(50.dp)
-                            )
-                        }
                     }
+                }
 
             }
+
             is CurrentWeatherState.FetchDetailsError -> {
                 Box(
-                    Modifier.clip(RoundedCornerShape(10)).background(Color.White)
+                    Modifier
+                        .fillMaxWidth(.9f)
+                        .clip(RoundedCornerShape(10))
+                        .background(Color.White)
                 ) {
                     Text(currentState.msg, modifier = Modifier.padding(10.dp), color = Color.Black)
                 }

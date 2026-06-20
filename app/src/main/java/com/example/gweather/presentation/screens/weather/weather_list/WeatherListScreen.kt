@@ -85,7 +85,9 @@ fun WeatherListScreen(
                 }
 
                 is WeatherListState.FetchingListSuccess -> {
-                    Column() {
+                    Column(
+                        Modifier.fillMaxSize()
+                    ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
