@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">GWeather</string>
+
+    <string name="location">Location</string>
+    <string name="temperature">Temperature</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="weather">Weather</string>
+    <string name="current_weather">Current Weather</string>
+    <string name="weather_list">Weather List</string>
+    <string name="time">Time</string>
+    <string name="id">ID</string>
+    <string name="welcome_gweather">Welcome to GWeather</string>
+    <string name="enter_username">Enter username</string>
+    <string name="enter_password">Enter password</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+</resources>
