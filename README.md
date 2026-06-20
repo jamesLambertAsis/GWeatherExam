@@ -1,9 +1,6 @@
 # GWeather 🌦️
 
-A modern, clean-architecture Android weather application built with Jetpack Compose.
-
-## 📁 Architecture
-The project follows **MVI+Clean Architecture**
+A  MVI+Clean-architecture Android weather application built with Jetpack Compose.
 
 ## 🚀 Tech Stack
 - **UI:** [Jetpack Compose](https://developer.android.com/compose) (Material 3)
